@@ -17,25 +17,24 @@ variables:
 
 test:
   stage: test
-  before_script:
-#    - docker compose -f docker-compose.local.yaml up -d
   script:
-#    - docker exec -t backend "pytest"
     - docker compose -f docker-compose.local.yaml run --rm backend pytest
 
 
 
-#deploy:
-#  stage: deploy
-#  rules:
-#      - if: $CI_COMMIT_BRANCH == "main"
-#  before_script:
-#    - apk update
-#    - apk add openssh-client
-#    - install -m 600 -D /dev/null ~/.ssh/id_rsa
-#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-#    - ssh-keyscan -H $SSH_HOST > ~/.ssh/known_hosts
-#  script:
-#    - ssh $SSH_USER@$SSH_HOST "cd $WORK_DIR && git checkout main && git pull && docker compose up -d --build && exit"
-#  after_script:
-#    - rm -rf ~/.ssh
+deploy:
+  stage: deploy
+  image: debian:stable
+  before_script:
+    - apt update
+    - apt install -y openssh-client git docker.io
+    - mkdir -p ~/.ssh
+    - echo "$ssh_key" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo "$known_key" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh -i ~/.ssh/id_rsa root@$deploy_ip "cd $deploy_path && git pull origin master"
+    - ssh -i ~/.ssh/id_rsa root@$deploy_ip "cd $deploy_path && docker compose pull && docker compose up -d"
+  only:
+    - master
