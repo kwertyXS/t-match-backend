@@ -10,7 +10,6 @@ class Login(BaseModel):
         login = login.strip()
         if len(login) < 6 or len(login) > 30:
             raise ValueError("Invalid login")
-        if
         return login
 
     @field_validator("password")

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.schemas.auth import Login
-from app.services.auth import login
+# from app.services.auth import login
 
 router = APIRouter()
 
