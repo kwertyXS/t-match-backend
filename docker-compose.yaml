@@ -17,11 +17,5 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    command: >
-      sh -c "
-        echo 'Running migrations...';
-        alembic upgrade head;
-        echo 'done!'      
-        "
 volumes:
   pgdata:
