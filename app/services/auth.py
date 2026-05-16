@@ -9,7 +9,7 @@ from app.db.session import AsyncSession
 from app.schemas.auth import Registration, Login
 
 from app.repository.auth import add_user, is_user_exists, get_user_by_login
-from app.validators.password import verify_password, create_access_token
+from app.validators.password import verify_password, create_refresh_token
 from settings import settings
 
 
@@ -35,13 +35,12 @@ async def login(data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
     user = await get_user_by_login(data.username)
     if await verify_password(data.password, user.password_hash):
     #     return {"access_token" :access_security.create_access_token(subject={"id": user.id, "login": user.nickname})}
-        access_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"nick": user.nickname, "id": user.id},
-            expires_delta=access_token_expires
+        refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        refresh_token = create_refresh_token(
+        data={"sub": user.login}, expires_delta=refresh_token_expires
         )
         return {
-          "access_token": access_token,
+          "refresh_token": refresh_token,
           "token_type": "bearer"
         }
 
