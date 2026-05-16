@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import String, Text, JSON, Enum as SQLAlchemyEnum, UniqueConstraint
+from sqlalchemy import String, Text, JSON, Enum as SQLAlchemyEnum, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import enum
@@ -18,22 +18,20 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     nickname: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=True, index=True)
     telegram: Mapped[Optional[str]] = mapped_column(String(100), unique=True, nullable=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     profiles: Mapped[List["Profile"]] = relationship(
         "Profile", back_populates="user", cascade="all, delete-orphan"
     )
-    created_meetings: Mapped[List["Meeting"]] = relationship(
-        "Meeting", back_populates="creator"
-    )
+
 
 
 class Profile(Base):
     __tablename__ = "profiles"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"),nullable=False, index=True)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     tags: Mapped[Optional[List[str]]] = mapped_column(JSON, nullable=True, default=list)
@@ -41,6 +39,9 @@ class Profile(Base):
     user: Mapped["User"] = relationship("User", back_populates="profiles")
     meeting_memberships: Mapped[List["MeetingMember"]] = relationship(
         "MeetingMember", back_populates="profile", cascade="all, delete-orphan"
+    )
+    created_meetings: Mapped[List["Meeting"]] = relationship(
+        "Meeting", back_populates="creator"
     )
 
 
@@ -52,11 +53,11 @@ class Meeting(Base):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     starts_at: Mapped[datetime] = mapped_column(nullable=False, index=True)
     ends_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
-    created_by: Mapped[Optional[int]] = mapped_column(nullable=True, index=True)
+    created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"),nullable=True, index=True)
 
     # Убрал foreign_keys - SQLAlchemy сам подставит created_by
-    creator: Mapped[Optional["User"]] = relationship(
-        "User", back_populates="created_meetings"
+    creator: Mapped[Optional["Profile"]] = relationship(
+        "Profile", back_populates="created_meetings"
     )
     members: Mapped[List["MeetingMember"]] = relationship(
         "MeetingMember", back_populates="meeting", cascade="all, delete-orphan"
@@ -70,8 +71,8 @@ class MeetingMember(Base):
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    meeting_id: Mapped[int] = mapped_column(nullable=False, index=True)
-    profile_id: Mapped[int] = mapped_column(nullable=False, index=True)
+    meeting_id: Mapped[int] = mapped_column(ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False, index=True)
+    profile_id: Mapped[int] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"), nullable=False, index=True)
     role: Mapped[MemberRole] = mapped_column(
         SQLAlchemyEnum(MemberRole), nullable=False, default=MemberRole.MEMBER
     )

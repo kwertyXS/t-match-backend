@@ -1,7 +1,9 @@
 from pydantic import BaseModel, field_validator
 
+from app.repository.auth import is_user_exists
 
-class Login(BaseModel):
+
+class Registration(BaseModel):
     login: str
     password: str
 
@@ -18,3 +20,7 @@ class Login(BaseModel):
         if len(password) < 5 or len(password) > 30:
             raise ValueError("Invalid password")
         return password
+
+class Login(Registration):
+    pass
+

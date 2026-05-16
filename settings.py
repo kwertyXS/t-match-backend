@@ -14,7 +14,11 @@ class Settings(BaseSettings):
     )
     PG_URL: str
     PG_USER: str
-    PG_PASSWORD: str
+    PG_PASS: str
+    SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+    ALGORITHM: str
+
 
 
 settings = Settings()
