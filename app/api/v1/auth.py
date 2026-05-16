@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, HT
 
 from app.db.models import User
 from app.repository.auth import get_user_by_login
-from app.schemas.auth import Registration, Login
+from app.schemas.auth import RegistrationSchema, LoginSchema
 from app.services.auth import registration, get_user, login, refresh
 from app.validators.password import get_current_user
 from settings import settings
@@ -15,11 +15,11 @@ router = APIRouter()
 security = HTTPBearer()
 
 @router.post("/registration")
-async def register(data: Registration):
+async def register(data: RegistrationSchema):
     return await registration(data)
 
 @router.post("/login")
-async def login_user(data: Login):
+async def login_user(data: LoginSchema):
     return await login(data)
 
 @router.get("/user/{login}")

@@ -7,14 +7,14 @@ from fastapi_jwt import JwtAccessBearer
 
 from app.db.session import AsyncSession
 
-from app.schemas.auth import Registration, Login
+from app.schemas.auth import RegistrationSchema, LoginSchema
 
 from app.repository.auth import add_user, is_user_exists, get_user_by_login, get_refresh_token, update_refresh_token
 from app.validators.password import verify_password, create_refresh_token, create_access_token
 from settings import settings
 
 
-async def registration(data: Registration):
+async def registration(data: RegistrationSchema):
     if await is_user_exists(data.login):
         raise HTTPException(status_code=400, detail="User already exists")
     refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -36,7 +36,7 @@ async def get_user(login: str):
 
 access_security = JwtAccessBearer(secret_key=settings.SECRET_KEY)
 
-async def login(data: Login) -> dict[str, str]:
+async def login(data: LoginSchema) -> dict[str, str]:
     user = await get_user_by_login(data.login)
     if await verify_password(data.password, user.password_hash):
         refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -62,8 +62,8 @@ async def refresh(refresh_token) -> dict[str, str]:
                              options={"verify_exp": False})
         if payload.get("type") != "refresh":
             raise HTTPException(status_code=401, detail="Invalid token type")
-        login = payload.get("sub")
-        if not login:
+        username = payload.get("sub")
+        if not username:
             raise HTTPException(status_code=401, detail="Invalid token payload")
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
@@ -74,11 +74,9 @@ async def refresh(refresh_token) -> dict[str, str]:
         raise HTTPException(status_code=401, detail="Token expired")
 
 
-    user = await get_user_by_login(login)
+    user = await get_user_by_login(username)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
-    access_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
     new_access_token = create_access_token(data={"sub": user.nickname})
 

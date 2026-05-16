@@ -1,9 +1,8 @@
 from pydantic import BaseModel, field_validator
 
-from app.repository.auth import is_user_exists
 
 
-class Registration(BaseModel):
+class RegistrationSchema(BaseModel):
     login: str
     password: str
 
@@ -21,6 +20,7 @@ class Registration(BaseModel):
             raise ValueError("Invalid password")
         return password
 
-class Login(Registration):
+class LoginSchema(RegistrationSchema):
     pass
+
 

@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-from sqlalchemy import String, Text, JSON, Enum as SQLAlchemyEnum, UniqueConstraint, ForeignKey
+from sqlalchemy import String, Text, JSON, Enum as SQLAlchemyEnum, UniqueConstraint, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.declarative import declarative_base
 import enum
@@ -52,8 +52,10 @@ class Meeting(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    starts_at: Mapped[datetime] = mapped_column(nullable=False)
-    ends_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+    ends_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True
+    )
     created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"),nullable=True)
 
     # Убрал foreign_keys - SQLAlchemy сам подставит created_by

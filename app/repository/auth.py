@@ -41,7 +41,7 @@ async def get_user_by_login(login: str) -> User:
             .where(User.nickname == login)
         )
         result = await session.execute(stmt)
-        user = result.scalar()
+        user = result.scalar_one_or_none()
         return user
 
 
