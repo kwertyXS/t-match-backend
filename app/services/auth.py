@@ -1,5 +1,6 @@
 import datetime
 
+import jwt
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_jwt import JwtAccessBearer
@@ -8,17 +9,21 @@ from app.db.session import AsyncSession
 
 from app.schemas.auth import Registration, Login
 
-from app.repository.auth import add_user, is_user_exists, get_user_by_login
-from app.validators.password import verify_password, create_refresh_token
+from app.repository.auth import add_user, is_user_exists, get_user_by_login, get_refresh_token, update_refresh_token
+from app.validators.password import verify_password, create_refresh_token, create_access_token
 from settings import settings
 
 
 async def registration(data: Registration):
     if await is_user_exists(data.login):
         raise HTTPException(status_code=400, detail="User already exists")
-    user = await add_user(data)
+    refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    refresh_token = create_refresh_token(
+        data={"sub": data.login}, expires_delta=refresh_token_expires
+    )
+    user = await add_user(data, refresh_token)
     if user is not None:
-        return {"id": user.id, "login": user.nickname}
+        return {"refresh_token": refresh_token}
     else:
         return {"ok": False}
 
@@ -31,14 +36,14 @@ async def get_user(login: str):
 
 access_security = JwtAccessBearer(secret_key=settings.SECRET_KEY)
 
-async def login(data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
-    user = await get_user_by_login(data.username)
+async def login(data: Login) -> dict[str, str]:
+    user = await get_user_by_login(data.login)
     if await verify_password(data.password, user.password_hash):
-    #     return {"access_token" :access_security.create_access_token(subject={"id": user.id, "login": user.nickname})}
         refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         refresh_token = create_refresh_token(
-        data={"sub": user.login}, expires_delta=refresh_token_expires
+        data={"sub": user.nickname}, expires_delta=refresh_token_expires
         )
+        await update_refresh_token(data.login, refresh_token)
         return {
           "refresh_token": refresh_token,
           "token_type": "bearer"
@@ -46,3 +51,36 @@ async def login(data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
 
     else:
         raise HTTPException(status_code=400, detail="Incorrect password")
+
+
+async def refresh(refresh_token) -> dict[str, str]:
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token missing")
+
+    try:
+        payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM],
+                             options={"verify_exp": False})
+        if payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+        login = payload.get("sub")
+        if not login:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+    except Exception:
+        raise HTTPException(status_code=401, detail="Token expired")
+
+
+    user = await get_user_by_login(login)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    access_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    new_access_token = create_access_token(data={"sub": user.nickname})
+
+
+    return {"access_token": new_access_token, "token_type": "bearer"}

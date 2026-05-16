@@ -18,7 +18,7 @@ async def is_user_exists(login: str) -> bool:
 
         return user_id is not None
 
-async def add_user(data) -> User:
+async def add_user(data, refresh_token) -> User:
     async with LocalSession() as session:
         print(data.password)
         hashed_password = await hash_password(data.password)
@@ -26,6 +26,7 @@ async def add_user(data) -> User:
             User(
                 nickname=data.login,
                 password_hash=hashed_password,
+                refresh_token=refresh_token
             )
         )
         session.add(user)
@@ -41,4 +42,26 @@ async def get_user_by_login(login: str) -> User:
         )
         result = await session.execute(stmt)
         user = result.scalar()
+        return user
+
+
+async def get_refresh_token(refresh_token: str) -> User:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.refresh_token == refresh_token)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar()
+        return user
+
+async def update_refresh_token(login, refresh_token) -> User:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.nickname == login)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        user.refresh_token = refresh_token
         return user
