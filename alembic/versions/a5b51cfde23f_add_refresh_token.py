@@ -29,7 +29,7 @@ def upgrade() -> None:
 
     op.add_column('users', sa.Column('refresh_token', sa.String(), nullable=True))
 
-    op.execute("UPDATE users SET refresh_token = ' ' WHERE refresh_token IS NULL")
+    op.execute("UPDATE users SET refresh_token = '' WHERE refresh_token IS NULL")
 
     op.alter_column('users', 'refresh_token', nullable=False)
     op.drop_index(op.f('ix_users_email'), table_name='users')
