@@ -37,7 +37,7 @@ async def login(data: OAuth2PasswordRequestForm = Depends()) -> dict[str, str]:
     #     return {"access_token" :access_security.create_access_token(subject={"id": user.id, "login": user.nickname})}
         access_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user.nickname, "id": user.id},
+            data={"nick": user.nickname, "id": user.id},
             expires_delta=access_token_expires
         )
         return {
