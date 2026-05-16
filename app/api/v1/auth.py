@@ -25,7 +25,7 @@ async def login_user(data: LoginSchema):
     return await login(data)
 
 @router.get("/user/{login}")
-async def get_user_by_id(login: str):
+async def get_user_by_login(login: str):
     """Получение пользователя по логину"""
     return await get_user(login)
 

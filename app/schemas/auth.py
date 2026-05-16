@@ -1,10 +1,10 @@
 from pydantic import BaseModel, field_validator
 
-
-
-class RegistrationSchema(BaseModel):
+class LoginSchema(BaseModel):
     login: str
     password: str
+
+class RegistrationSchema(LoginSchema):
     email: str = None
     telegram: str = None
 
@@ -28,7 +28,5 @@ class RegistrationSchema(BaseModel):
             raise ValueError("Некорректный формат email")
         return email.lower()
 
-class LoginSchema(RegistrationSchema):
-    pass
 
 

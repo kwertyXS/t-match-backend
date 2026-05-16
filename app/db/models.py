@@ -21,10 +21,17 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=True)
     telegram: Mapped[Optional[str]] = mapped_column(String(100), unique=True, nullable=True)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    refresh_token: Mapped[str] = mapped_column(nullable=False)
+
+    friends: Mapped[List["Friend"]] = relationship(
+        "Friend",
+        back_populates="user",
+        foreign_keys="[Friend.user_id]",
+        cascade="all, delete-orphan"
+    )
     profiles: Mapped[List["Profile"]] = relationship(
         "Profile", back_populates="user", cascade="all, delete-orphan"
     )
-    refresh_token: Mapped[str] = mapped_column(nullable=False)
 
 
 
@@ -58,7 +65,6 @@ class Meeting(Base):
     )
     created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"),nullable=True)
 
-    # Убрал foreign_keys - SQLAlchemy сам подставит created_by
     creator: Mapped[Optional["Profile"]] = relationship(
         "Profile", back_populates="created_meetings"
     )
@@ -69,9 +75,6 @@ class Meeting(Base):
 
 class MeetingMember(Base):
     __tablename__ = "meeting_members"
-    __table_args__ = (
-        UniqueConstraint('meeting_id', 'profile_id', name='uq_meeting_profile'),
-    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     meeting_id: Mapped[int] = mapped_column(ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False)
@@ -82,3 +85,20 @@ class MeetingMember(Base):
 
     meeting: Mapped["Meeting"] = relationship("Meeting", back_populates="members")
     profile: Mapped["Profile"] = relationship("Profile", back_populates="meeting_memberships")
+
+    __table_args__ = (
+        UniqueConstraint('meeting_id', 'profile_id', name='uq_meeting_profile'),
+    )
+
+class Friend(Base):
+    __tablename__ = 'friends'
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"),nullable=False)
+    friend_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"),nullable=False)
+    accept: Mapped[bool] = mapped_column(nullable=True)
+
+    user = relationship('User', foreign_keys=[user_id], back_populates='friends')
+    friend = relationship('User', foreign_keys=[friend_id])
+
