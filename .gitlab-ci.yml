@@ -24,12 +24,11 @@ test:
 
 deploy:
   stage: deploy
-  image: debian:stable
   before_script:
-    - apt update
-    - apt install -y openssh-client
-    - mkdir -p ~/.ssh
-    - echo "$ssh_key" > ~/.ssh/id_rsa
+    - apk update
+    - apk add openssh-client
+    - install -m 600 -D /dev/null ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo "$known_key" > ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
