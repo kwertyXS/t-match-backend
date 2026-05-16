@@ -27,7 +27,7 @@ deploy:
   image: debian:stable
   before_script:
     - apt update
-    - apt install -y openssh-client git docker.io
+    - apt install -y openssh-client
     - mkdir -p ~/.ssh
     - echo "$ssh_key" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
