@@ -34,6 +34,7 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - ssh -i ~/.ssh/id_rsa ubuntu@$deploy_ip "cd $deploy_path && git pull origin master"
+    - ssh -i ~/.ssh/id_rsa ubuntu@$deploy_ip "cd $deploy_path && echo \"${ENV_DATA}\" > .env"
     - ssh -i ~/.ssh/id_rsa ubuntu@$deploy_ip "cd $deploy_path && docker compose pull && docker compose up -d"
   only:
     - master
