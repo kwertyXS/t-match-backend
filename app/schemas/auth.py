@@ -5,6 +5,8 @@ from pydantic import BaseModel, field_validator
 class RegistrationSchema(BaseModel):
     login: str
     password: str
+    email: str = None
+    telegram: str = None
 
     @field_validator("login")
     def login_validator(cls, login):
@@ -19,6 +21,12 @@ class RegistrationSchema(BaseModel):
         if len(password) < 5 or len(password) > 30:
             raise ValueError("Invalid password")
         return password
+
+    @field_validator("email")
+    def validate_email(cls, email) -> str:
+        if "@" not in email or "." not in email.split("@")[-1]:
+            raise ValueError("Некорректный формат email")
+        return email.lower()
 
 class LoginSchema(RegistrationSchema):
     pass

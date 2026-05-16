@@ -26,6 +26,8 @@ async def add_user(data, refresh_token) -> User:
             User(
                 nickname=data.login,
                 password_hash=hashed_password,
+                email=data.email,
+                telegram=data.telegram,
                 refresh_token=refresh_token
             )
         )
@@ -66,3 +68,24 @@ async def update_refresh_token(login, refresh_token) -> User:
         user.refresh_token = refresh_token
         await session.commit()
         return user
+
+
+async def is_tg_exists(tg: str) -> bool:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.telegram== tg)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return user is not None
+
+async def is_email_exists(email: str) -> bool:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.email == email)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return user is not None

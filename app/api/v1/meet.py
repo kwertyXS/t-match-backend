@@ -8,4 +8,5 @@ router = APIRouter()
 @router.post("/meeting")
 async def meeting(data: MeetingSchema,
                   current_user: dict = Depends(get_current_user)):
+    """Создание встречи"""
     return await new_meet(data, current_user)

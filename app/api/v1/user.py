@@ -8,4 +8,5 @@ router = APIRouter()
 
 @router.patch("/user")
 async def update_user(data: UserSchema, current_user: dict = Depends(get_current_user)):
+    """изменение юзера"""
     return await edit_user(data)

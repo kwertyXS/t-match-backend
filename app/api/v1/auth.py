@@ -16,14 +16,17 @@ security = HTTPBearer()
 
 @router.post("/registration")
 async def register(data: RegistrationSchema):
+    """Регистрация пользователя"""
     return await registration(data)
 
 @router.post("/login")
 async def login_user(data: LoginSchema):
+    """Вход пользователя в УЗ"""
     return await login(data)
 
 @router.get("/user/{login}")
 async def get_user_by_id(login: str):
+    """Получение пользователя по логину"""
     return await get_user(login)
 
 @router.get("/health")
@@ -32,7 +35,7 @@ async def health():
 
 @router.get("/me")
 async def read_users_me(current_user: dict = Depends(get_current_user)):
-    """Это ЭНДПОИНТ, который использует зависимость get_current_user"""
+    """Получение пользователя по токену"""
     user = await get_user_by_login(current_user['login'])
 
     if not user:
@@ -46,4 +49,5 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
     }
 @router.post("/refresh")
 async def refresh_token(token: str):
+    """Получение access токена"""
     return await refresh(token)
