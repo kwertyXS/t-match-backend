@@ -43,7 +43,7 @@ async def login(data: Login) -> dict[str, str]:
         refresh_token = create_refresh_token(
         data={"sub": user.nickname}, expires_delta=refresh_token_expires
         )
-        await update_refresh_token(data.login, refresh_token)
+        await update_refresh_token(user.nickname, refresh_token)
         return {
           "refresh_token": refresh_token,
           "token_type": "bearer"
