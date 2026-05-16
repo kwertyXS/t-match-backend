@@ -64,4 +64,5 @@ async def update_refresh_token(login, refresh_token) -> User:
         result = await session.execute(stmt)
         user = result.scalar_one_or_none()
         user.refresh_token = refresh_token
+        await session.commit()
         return user

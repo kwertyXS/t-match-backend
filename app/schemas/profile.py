@@ -3,7 +3,7 @@ from typing import List
 from pydantic import BaseModel, field_validator
 
 
-class ProfileSchema(BaseModel):
+class ProfileCreateSchema(BaseModel):
     title: str
     description: str = None
     tags: List[str]
@@ -15,3 +15,6 @@ class ProfileSchema(BaseModel):
         if len(title) < 3:
             raise ValueError("Title too short")
         return title
+
+class ProfileUpdateSchema(ProfileCreateSchema):
+    id: int
