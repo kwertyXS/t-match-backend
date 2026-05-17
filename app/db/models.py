@@ -48,9 +48,7 @@ class Profile(Base):
     meeting_memberships: Mapped[List["MeetingMember"]] = relationship(
         "MeetingMember", back_populates="profile", cascade="all, delete-orphan"
     )
-    created_meetings: Mapped[List["Meeting"]] = relationship(
-        "Meeting", back_populates="creator"
-    )
+
 
 
 class Meeting(Base):
