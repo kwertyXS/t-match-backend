@@ -15,7 +15,6 @@ async def add_meet(data: MeetingSchema) -> Meeting:
             Meeting(title = data.title,
                     description = data.description,
                     ends_at = time_msk,
-                    created_by=data.created_by
             )
         )
         session.add(stmt)

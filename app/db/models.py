@@ -63,7 +63,6 @@ class Meeting(Base):
         DateTime(timezone=True),
         nullable=True
     )
-    created_by: Mapped[Optional[int]] = mapped_column(ForeignKey("profiles.id", ondelete="CASCADE"),nullable=True)
 
     creator: Mapped[Optional["Profile"]] = relationship(
         "Profile", back_populates="created_meetings"
