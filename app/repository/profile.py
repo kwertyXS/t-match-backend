@@ -55,3 +55,13 @@ async def get_user_profile(profile_id: int) -> Profile:
         result = await session.execute(stmt)
         profile = result.scalar_one_or_none()
         return profile
+
+async def get_profile_by_id(profile_id) -> Profile:
+    async with LocalSession() as session:
+        stmt = (
+            select(Profile)
+            .where(Profile.id == profile_id)
+        )
+        result = await session.execute(stmt)
+        profile = result.scalar_one_or_none()
+        return profile

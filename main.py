@@ -13,5 +13,3 @@ app.include_router(user_router, prefix="/api/v1", tags=["user"])
 app.include_router(meet_router, prefix="/api/v1", tags=["meet"])
 app.include_router(profile_router, prefix="/api/v1", tags=["profile"])
 app.include_router(friendship_router, prefix="/api/v1", tags=["friendship"])
-
-
