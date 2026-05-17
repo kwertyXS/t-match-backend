@@ -1,8 +1,9 @@
 from fastapi import Depends, HTTPException
 
-from app.repository.auth import get_user_by_login
+from app.repository.user import get_user_by_login
 from app.schemas.friend import FriendshipSchema
-from app.repository.friend import add_users_friendship, accept_friendship, deny_friend, is_friendship_exists
+from app.repository.friend import add_users_friendship, accept_friendship, deny_friend, is_friendship_exists, \
+    get_friends
 from app.validators.password import get_current_user
 
 
@@ -40,3 +41,9 @@ async def deny_friendship(data: FriendshipSchema, current_user: dict = Depends(g
     user2 = max(user_1.id, user_2.id)
     await deny_friend(user1, user2)
     return {"ok": True}
+
+async def get_user_friends(current_user: dict = Depends(get_current_user)):
+    user = await get_user_by_login(current_user['login'])
+    friends = await get_friends(user.id)
+    print("USERS FRIENDS", friends)
+    return friends

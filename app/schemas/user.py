@@ -11,3 +11,10 @@ class UserSchema(BaseModel):
         if "@" not in v or "." not in v.split("@")[-1]:
             raise ValueError("Некорректный формат email")
         return v.lower()
+
+
+class UserResponseSchema(BaseModel):
+    user_id:int
+    nickname: str
+    email: str | None
+    telegram: str | None

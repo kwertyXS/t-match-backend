@@ -20,8 +20,8 @@ class LoginSchema(BaseModel):
 
 
 class RegistrationSchema(LoginSchema):
-    email: str = None
-    telegram: str = None
+    email: str | None = None
+    telegram: str |None = None
 
     @model_validator(mode='after')
     def validate_email_or_telegram(self):

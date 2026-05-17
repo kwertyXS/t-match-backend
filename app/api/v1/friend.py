@@ -1,7 +1,9 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 
-from app.schemas.friend import FriendshipSchema
-from app.services.friend import add_friendship, accept_friend, deny_friendship
+from app.schemas.friend import FriendshipSchema, FriendshipAnswerSchema
+from app.services.friend import add_friendship, accept_friend, deny_friendship, get_user_friends
 from app.validators.password import get_current_user
 
 router = APIRouter()
@@ -23,3 +25,7 @@ async def deny_friend(data: FriendshipSchema,
                       current_user: dict = Depends(get_current_user)):
     """Отклонение предложения дружбы"""
     return await deny_friendship(data, current_user)
+
+@router.get("/friends")
+async def get_friends(current_user: dict = Depends(get_current_user)) -> List[FriendshipAnswerSchema]:
+    return await get_user_friends(current_user)

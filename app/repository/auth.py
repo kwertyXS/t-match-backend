@@ -36,16 +36,6 @@ async def add_user(data, refresh_token) -> User:
         await session.refresh(user)
         return user
 
-async def get_user_by_login(login: str) -> User:
-    async with LocalSession() as session:
-        stmt = (
-            select(User)
-            .where(User.nickname == login)
-        )
-        result = await session.execute(stmt)
-        user = result.scalar_one_or_none()
-        return user
-
 
 async def get_refresh_token(refresh_token: str) -> User:
     async with LocalSession() as session:

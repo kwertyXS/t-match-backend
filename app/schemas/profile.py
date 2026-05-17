@@ -25,4 +25,3 @@ class ResponseProfileSchema(BaseModel):
     title: str
     description: str
     tags: List[str]
-

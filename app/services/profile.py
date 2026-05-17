@@ -1,7 +1,6 @@
 from fastapi import Depends
-from sqlalchemy.sql.functions import current_user
 
-from app.repository.auth import get_user_by_login
+from app.repository.user import get_user_by_login
 from app.repository.profile import add_profile, update_profile, get_profiles, get_user_profile
 from app.schemas.profile import ProfileCreateSchema, ProfileUpdateSchema
 from app.validators.password import get_current_user

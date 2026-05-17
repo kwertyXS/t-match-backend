@@ -52,3 +52,13 @@ async def is_friendship_exists(user1: int, user2: int):
         if friendship:
             return True
         return False
+
+async def get_friends(user_id: int):
+    async with LocalSession() as session:
+        stmt = (
+            select(Friend)
+            .where(Friend.accept == True and (Friend.user_id == user_id or Friend.friend_id == user_id))
+        )
+        result = await session.execute(stmt)
+        friends = result.scalars().all()
+        return friends

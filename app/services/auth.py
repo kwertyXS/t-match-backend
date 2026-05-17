@@ -7,8 +7,9 @@ from fastapi_jwt import JwtAccessBearer
 
 from app.schemas.auth import RegistrationSchema, LoginSchema
 
-from app.repository.auth import add_user, is_user_exists, get_user_by_login, get_refresh_token, update_refresh_token, \
+from app.repository.auth import add_user, is_user_exists, update_refresh_token, \
     is_tg_exists, is_email_exists
+from app.repository.user import get_user_by_login
 from app.validators.password import verify_password, create_refresh_token, create_access_token
 from settings import settings
 
@@ -91,3 +92,4 @@ async def refresh(refresh_token) -> dict[str, str]:
 
 
     return {"access_token": new_access_token}
+

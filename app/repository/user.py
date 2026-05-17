@@ -31,3 +31,23 @@ async def get_user_by_profile(profile_id: int) -> User:
         result = await session.execute(stmt)
         user = result.scalar_one_or_none()
         return user
+
+async def get_user_by_id(user_id: int) -> User:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.id == user_id)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return user
+
+async def get_user_by_login(login: str) -> User:
+    async with LocalSession() as session:
+        stmt = (
+            select(User)
+            .where(User.nickname == login)
+        )
+        result = await session.execute(stmt)
+        user = result.scalar_one_or_none()
+        return user

@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from app.repository.auth import get_user_by_login
+from app.repository.user import get_user_by_login
 from app.repository.meet import add_meet
 from app.schemas.meet import MeetingSchema
 from app.validators.password import get_current_user
