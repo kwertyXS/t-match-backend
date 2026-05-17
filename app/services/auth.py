@@ -1,12 +1,9 @@
 import datetime
 
 import jwt
-from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import HTTPException
 from fastapi_jwt import JwtAccessBearer
-from sqlalchemy.util import await_only
 
-from app.db.session import AsyncSession
 
 from app.schemas.auth import RegistrationSchema, LoginSchema
 
@@ -59,7 +56,6 @@ async def login(data: LoginSchema) -> dict[str, str]:
         await update_refresh_token(user.nickname, refresh_token)
         return {
           "refresh_token": refresh_token,
-          "token_type": "bearer"
         }
 
     else:
@@ -94,4 +90,4 @@ async def refresh(refresh_token) -> dict[str, str]:
     new_access_token = create_access_token(data={"sub": user.nickname})
 
 
-    return {"access_token": new_access_token, "token_type": "bearer"}
+    return {"access_token": new_access_token}

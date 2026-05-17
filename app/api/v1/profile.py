@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends
+
+from app.db.models import Profile
 from app.services.profile import new_profile, edit_profile, get_user_profiles, get_profile
-from app.schemas.profile import ProfileCreateSchema, ProfileUpdateSchema
+from app.schemas.profile import ProfileCreateSchema, ProfileUpdateSchema, ResponseProfileSchema
 from app.validators.password import get_current_user
 
 router = APIRouter()
 
 @router.get("/profile/{id}")
-async def get_user_profile(profile_id: int):
+async def get_user_profile(profile_id: int) -> ResponseProfileSchema:
     """Получение профиля по id"""
     return await get_profile(profile_id)
 

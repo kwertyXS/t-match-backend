@@ -39,3 +39,16 @@ async def deny_friend(user1: int, user2: int):
         if friendship:
             await session.delete(friendship)
             await session.commit()
+
+
+async def is_friendship_exists(user1: int, user2: int):
+    async with LocalSession() as session:
+        stmt = (
+            select(Friend)
+            .where(Friend.user_id == user1 and Friend.friend_id == user2)
+        )
+        result = await session.execute(stmt)
+        friendship = result.scalar_one_or_none()
+        if friendship:
+            return True
+        return False

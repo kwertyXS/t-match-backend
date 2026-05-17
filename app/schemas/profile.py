@@ -18,3 +18,11 @@ class ProfileCreateSchema(BaseModel):
 
 class ProfileUpdateSchema(ProfileCreateSchema):
     id: int
+
+class ResponseProfileSchema(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    description: str
+    tags: List[str]
+
