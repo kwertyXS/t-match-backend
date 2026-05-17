@@ -10,7 +10,6 @@ import os
 # путь к корню проекта
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# фейковые env-переменные для тестов
 os.environ.setdefault("PG_URL", "postgresql+asyncpg://test:test@localhost/test")
 os.environ.setdefault("PG_USER", "test")
 os.environ.setdefault("PG_PASS", "test")

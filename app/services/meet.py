@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException
 from app.db.models import MemberRole
 from app.repository.meet import add_meet, add_member, get_all_meeting_members, get_meet_by_id
 from app.repository.profile import get_profile_by_id
-from app.schemas.meet import MeetingSchema, JoinToMeetingSchema
+from app.schemas.meet import MeetingSchema, JoinToMeetingSchema, MeetingMemberResponseSchema
 from app.validators.password import get_current_user
 
 
@@ -33,4 +33,7 @@ async def new_meet_member(meet_data: JoinToMeetingSchema):
 
 async def get_all_meeting_profiles(meet_id: int):
     members = await get_all_meeting_members(meet_id)
-    return members
+    return [
+                MeetingMemberResponseSchema(profile_id=row.profile_id, role=row.role)
+                for row in members
+            ]

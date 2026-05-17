@@ -1,6 +1,8 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from app.services.meet import new_meet, new_meet_member, get_all_meeting_profiles
-from app.schemas.meet import MeetingSchema, JoinToMeetingSchema
+from app.schemas.meet import MeetingSchema, JoinToMeetingSchema, MeetingMemberResponseSchema
 from app.validators.password import get_current_user
 
 router = APIRouter()
@@ -17,5 +19,6 @@ async def join_user(meet_data: JoinToMeetingSchema):
     return await new_meet_member(meet_data)
 
 @router.get("/meeting/{id}")
-async def get_all_meeting_members(id: int):
+async def get_all_meeting_members(id: int) -> List[MeetingMemberResponseSchema]:
+    """Получение списка id всех юзеров на мите"""
     return await get_all_meeting_profiles(id)

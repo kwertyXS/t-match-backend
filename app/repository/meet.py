@@ -37,14 +37,14 @@ async def add_member(meet_data: JoinToMeetingSchema, role: MemberRole) -> Meetin
         return stmt
 
 
-async def get_all_meeting_members(meet_id: int) -> List[MeetingMember.profile_id]:
+async def get_all_meeting_members(meet_id: int) -> List[MeetingMember]:
     async with LocalSession() as session:
         stmt = (
-            select(MeetingMember.profile_id)
+            select(MeetingMember.profile_id, MeetingMember.role)
             .where(MeetingMember.meeting_id == meet_id)
         )
         result = await session.execute(stmt)
-        profiles = result.scalars().all()
+        profiles = result.all()
         return profiles
 
 async def get_meet_by_id(meet_id: int) -> Meeting:

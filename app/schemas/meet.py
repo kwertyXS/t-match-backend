@@ -13,3 +13,9 @@ class JoinToMeetingSchema(BaseModel):
     profile_id: int
     meeting_id: int
 
+
+class MeetingMemberResponseSchema(BaseModel):
+    profile_id: int
+    role: str
+
+
