@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, HT
 
 from app.db.models import User
 from app.repository.user import get_user_by_login
-from app.schemas.auth import RegistrationSchema, LoginSchema
+from app.schemas.auth import RegistrationSchema, LoginSchema, RefreshTokenAnswerSchema, AccessTokenAnswerSchema
 from app.services.auth import registration, get_user, login, refresh
 from app.validators.password import get_current_user
 from settings import settings
@@ -15,11 +15,11 @@ router = APIRouter()
 security = HTTPBearer()
 
 @router.post("/registration")
-async def register(data: RegistrationSchema):
+async def register(data: RegistrationSchema) -> RefreshTokenAnswerSchema:
     return await registration(data)
 
 @router.post("/login")
-async def login_user(data: LoginSchema):
+async def login_user(data: LoginSchema) -> RefreshTokenAnswerSchema:
     return await login(data)
 
 @router.get("/user/{login}")
@@ -45,5 +45,5 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
         "tg": user.telegram
     }
 @router.post("/refresh")
-async def refresh_token(token: str):
+async def refresh_token(token: str) -> AccessTokenAnswerSchema:
     return await refresh(token)

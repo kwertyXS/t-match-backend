@@ -35,6 +35,9 @@ class RegistrationSchema(LoginSchema):
             raise ValueError("Некорректный формат email")
         return email.lower()
 
+class AccessTokenAnswerSchema(BaseModel):
+    access_token: str
 
-
+class RefreshTokenAnswerSchema(BaseModel):
+    refresh_token: str
 

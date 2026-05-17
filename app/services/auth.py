@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from fastapi_jwt import JwtAccessBearer
 
 
-from app.schemas.auth import RegistrationSchema, LoginSchema
+from app.schemas.auth import RegistrationSchema, LoginSchema, RefreshTokenAnswerSchema, AccessTokenAnswerSchema
 
 from app.repository.auth import add_user, is_user_exists, update_refresh_token, \
     is_tg_exists, is_email_exists
@@ -15,7 +15,7 @@ from settings import settings
 
 access_security = JwtAccessBearer(secret_key=settings.SECRET_KEY)
 
-async def registration(data: RegistrationSchema):
+async def registration(data: RegistrationSchema) -> RefreshTokenAnswerSchema:
     if await is_user_exists(data.login):
         raise HTTPException(status_code=400, detail="User already exists")
 
@@ -35,7 +35,7 @@ async def registration(data: RegistrationSchema):
     user = await add_user(data, refresh_token)
 
     if user is not None:
-        return {"refresh_token": refresh_token}
+        return RefreshTokenAnswerSchema(refresh_token=refresh_token)
     else:
         return {"ok": False}
 
@@ -47,7 +47,7 @@ async def get_user(login: str):
         raise HTTPException(status_code=400, detail="User does not exist")
 
 
-async def login(data: LoginSchema) -> dict[str, str]:
+async def login(data: LoginSchema) -> RefreshTokenAnswerSchema:
     user = await get_user_by_login(data.login)
     if await verify_password(data.password, user.password_hash):
         refresh_token_expires = datetime.timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -55,15 +55,12 @@ async def login(data: LoginSchema) -> dict[str, str]:
         data={"sub": user.nickname}, expires_delta=refresh_token_expires
         )
         await update_refresh_token(user.nickname, refresh_token)
-        return {
-          "refresh_token": refresh_token,
-        }
-
+        return RefreshTokenAnswerSchema(refresh_token=refresh_token)
     else:
         raise HTTPException(status_code=400, detail="Incorrect password")
 
 
-async def refresh(refresh_token) -> dict[str, str]:
+async def refresh(refresh_token) -> AccessTokenAnswerSchema:
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
 
@@ -91,5 +88,5 @@ async def refresh(refresh_token) -> dict[str, str]:
     new_access_token = create_access_token(data={"sub": user.nickname})
 
 
-    return {"access_token": new_access_token}
+    return AccessTokenAnswerSchema(access_token=new_access_token)
 

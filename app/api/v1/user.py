@@ -29,6 +29,6 @@ async def get_users_me(current_user: dict = Depends(get_current_user))  -> UserR
     return await get_user_by_token(current_user)
 
 @router.patch("/user")
-async def update_user(data: UserSchema, current_user: dict = Depends(get_current_user)):
+async def update_user(data: UserSchema, current_user: dict = Depends(get_current_user)) -> UserResponseSchema:
     """изменение юзера"""
     return await edit_user(data)
