@@ -47,6 +47,8 @@ async def read_users_me(current_user: dict = Depends(get_current_user)):
         "email": user.email,
         "tg": user.telegram
     }
+
+
 @router.post("/refresh")
 async def refresh_token(token: str):
     """Получение access токена"""

@@ -8,9 +8,9 @@ from app.validators.password import get_current_user
 router = APIRouter()
 
 @router.get("/profile/{id}")
-async def get_user_profile(profile_id: int) -> ResponseProfileSchema:
+async def get_user_profile(id: int) -> ResponseProfileSchema:
     """Получение профиля по id"""
-    return await get_profile(profile_id)
+    return await get_profile(id)
 
 @router.get("/profiles")
 async def get_profiles(current_user: dict = Depends(get_current_user)):
