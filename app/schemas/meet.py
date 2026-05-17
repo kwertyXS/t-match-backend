@@ -7,7 +7,6 @@ class MeetingSchema(BaseModel):
     title: str
     description: str
     ends_at: datetime
-    created_by: int
 
 class JoinToMeetingSchema(BaseModel):
     profile_id: int
