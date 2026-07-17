@@ -61,7 +61,7 @@ def create_refresh_token(
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
-    """Это ЗАВИСИМОСТЬ, а не эндпоинт!"""
+    """Зависимость проверки логина и выдачи данных по нему"""
     token = credentials.credentials
 
     try:
