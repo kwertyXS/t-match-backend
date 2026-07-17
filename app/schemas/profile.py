@@ -16,8 +16,10 @@ class ProfileCreateSchema(BaseModel):
             raise ValueError("Title too short")
         return title
 
+
 class ProfileUpdateSchema(ProfileCreateSchema):
     id: int
+
 
 class ResponseProfileSchema(BaseModel):
     id: int

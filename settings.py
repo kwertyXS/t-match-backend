@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).parent
 
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         frozen=True,
@@ -19,7 +20,6 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     ALGORITHM: str
     REFRESH_TOKEN_EXPIRE_DAYS: int
-
 
 
 settings = Settings()

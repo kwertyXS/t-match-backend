@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")  # UTC+3
 
+
 async def ensure_msk(dt: datetime.datetime) -> datetime.datetime:
     """Гарантирует, что datetime будет в МСК и будет timezone-aware."""
     if dt is None:

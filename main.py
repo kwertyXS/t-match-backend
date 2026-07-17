@@ -15,5 +15,5 @@ app.include_router(meet_router, prefix="/api/v1", tags=["meet"])
 app.include_router(profile_router, prefix="/api/v1", tags=["profile"])
 app.include_router(friendship_router, prefix="/api/v1", tags=["friendship"])
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", reload=True)

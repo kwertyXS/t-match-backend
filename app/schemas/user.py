@@ -14,7 +14,7 @@ class UserSchema(BaseModel):
 
 
 class UserResponseSchema(BaseModel):
-    user_id:int
+    user_id: int
     nickname: str
     email: str | None
     telegram: str | None

@@ -10,11 +10,12 @@ from dotenv import load_dotenv
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(env_path)
 
-from alembic import context
+from alembic import context  # noqa: E402
 
-from app.db.models import Base
+from app.db.models import Base  # noqa: E402
 
-from settings import settings
+from settings import settings  # noqa: E402
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config

@@ -4,6 +4,7 @@ from pydantic import BaseModel, field_validator, model_validator
 class LoginSchema(BaseModel):
     login: str
     password: str
+
     @field_validator("login")
     def login_validator(cls, login):
         login = login.strip()
@@ -21,9 +22,9 @@ class LoginSchema(BaseModel):
 
 class RegistrationSchema(LoginSchema):
     email: str | None = None
-    telegram: str |None = None
+    telegram: str | None = None
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def validate_email_or_telegram(self):
         if not self.email and not self.telegram:
             raise ValueError("Email or Telegram required")
@@ -35,9 +36,10 @@ class RegistrationSchema(LoginSchema):
             raise ValueError("Некорректный формат email")
         return email.lower()
 
+
 class AccessTokenAnswerSchema(BaseModel):
     access_token: str
 
+
 class RefreshTokenAnswerSchema(BaseModel):
     refresh_token: str
-
