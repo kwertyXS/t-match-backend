@@ -5,7 +5,6 @@ from typing import Optional
 from fastapi import Depends, HTTPException
 import jwt
 from fastapi.security import OAuth2PasswordBearer, HTTPBearer, HTTPAuthorizationCredentials
-from jwt import InvalidTokenError
 from starlette import status
 
 from settings import settings

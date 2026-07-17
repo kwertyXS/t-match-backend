@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 
 from app.api.v1.auth import router as auth_router
@@ -13,3 +14,6 @@ app.include_router(user_router, prefix="/api/v1", tags=["user"])
 app.include_router(meet_router, prefix="/api/v1", tags=["meet"])
 app.include_router(profile_router, prefix="/api/v1", tags=["profile"])
 app.include_router(friendship_router, prefix="/api/v1", tags=["friendship"])
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", reload=True)
