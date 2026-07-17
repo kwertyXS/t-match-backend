@@ -57,9 +57,9 @@ jobs:
           docker save ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
 
       - name: Generate release body
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch --tags
-          PREV=$(git tag --sort=-creatordate | head -2 | tail -1)
           {
             echo "## Как запустить"
             echo ""
@@ -68,14 +68,16 @@ jobs:
             echo "docker run -d -p 8000:8000 ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}"
             echo '```'
             echo ""
-            echo "## Изменения"
+            echo "## Описание MR"
             echo ""
-            if [ -z "$PREV" ]; then
-              git log --oneline --no-decorate ${{ github.event.workflow_run.head_sha }}
-            else
-              git log --oneline --no-decorate ${PREV}..${{ github.event.workflow_run.head_sha }}
-            fi
           } > /tmp/release_body.md
+          gh pr list \
+            --repo ${{ github.repository }} \
+            --state merged \
+            --search "${{ github.event.workflow_run.head_sha }}" \
+            --json body \
+            --jq '.[0].body // empty' \
+            2>/dev/null >> /tmp/release_body.md || true
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
