@@ -32,21 +32,26 @@ jobs:
           username: ${{ secrets.DO_CR_USERNAME }}
           password: ${{ secrets.DO_CR_TOKEN }}
 
+      - name: Prepare image tags
+        id: prep
+        run: |
+          echo "repo_path=${{ github.repository_owner }}/${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}
-            ghcr.io/${{ lower(github.repository) }}:latest
+            ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}
+            ghcr.io/${{ steps.prep.outputs.repo_path }}:latest
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:latest
 
       - name: Save image archive
         run: |
-          docker pull ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}
-          docker save ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
+          docker pull ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}
+          docker save ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -55,7 +60,7 @@ jobs:
           name: Release v${{ github.event.workflow_run.run_number }}
           body: |
             ## Docker Image
-            - `ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}`
+            - `ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}`
             - `registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}`
           files: backend-image.tar.gz
           generate_release_notes: true
