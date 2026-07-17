@@ -38,15 +38,15 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}
+            ghcr.io/${{ lower(github.repository) }}:latest
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:latest
 
       - name: Save image archive
         run: |
-          docker pull ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}
-          docker save ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
+          docker pull ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}
+          docker save ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -55,7 +55,7 @@ jobs:
           name: Release v${{ github.event.workflow_run.run_number }}
           body: |
             ## Docker Image
-            - `ghcr.io/${{ github.repository }}:${{ github.event.workflow_run.head_sha }}`
+            - `ghcr.io/${{ lower(github.repository) }}:${{ github.event.workflow_run.head_sha }}`
             - `registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}`
           files: backend-image.tar.gz
           generate_release_notes: true
