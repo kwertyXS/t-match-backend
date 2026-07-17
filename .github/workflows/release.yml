@@ -56,14 +56,31 @@ jobs:
           docker pull ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}
           docker save ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
 
+      - name: Generate release body
+        run: |
+          git fetch --tags
+          PREV=$(git tag --sort=-creatordate | head -2 | tail -1)
+          {
+            echo "## Как запустить"
+            echo ""
+            echo '```'
+            echo "docker pull ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}"
+            echo "docker run -d -p 8000:8000 ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}"
+            echo '```'
+            echo ""
+            echo "## Изменения"
+            echo ""
+            if [ -z "$PREV" ]; then
+              git log --oneline --no-decorate ${{ github.event.workflow_run.head_sha }}
+            else
+              git log --oneline --no-decorate ${PREV}..${{ github.event.workflow_run.head_sha }}
+            fi
+          } > /tmp/release_body.md
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.event.workflow_run.run_number }}
           name: Release v${{ github.event.workflow_run.run_number }}
-          body: |
-            ## Docker Image
-            - `ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}`
-            - `registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}`
+          body_path: /tmp/release_body.md
           files: backend-image.tar.gz
-          generate_release_notes: true
