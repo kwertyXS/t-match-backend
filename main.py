@@ -6,6 +6,7 @@ from app.api.v1.meet import router as meet_router
 from app.api.v1.profile import router as profile_router
 from app.api.v1.user import router as user_router
 from app.api.v1.friend import router as friendship_router
+from app.api.v1.test import router as test_router
 
 app = FastAPI()
 
@@ -14,6 +15,7 @@ app.include_router(user_router, prefix="/api/v1", tags=["user"])
 app.include_router(meet_router, prefix="/api/v1", tags=["meet"])
 app.include_router(profile_router, prefix="/api/v1", tags=["profile"])
 app.include_router(friendship_router, prefix="/api/v1", tags=["friendship"])
+app.include_router(test_router, prefix="/api/v1", tags=["test"])
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", reload=True)
