@@ -20,11 +20,6 @@ async def login_user(data: LoginSchema, db: AsyncSession = Depends(get_db)):
     return await login(db, data)
 
 
-@router.get("/health")
-async def health():
-    return {"status": "ok"}
-
-
 @router.post("/refresh")
 async def refresh_token(token: str, db: AsyncSession = Depends(get_db)):
     return await refresh(db, token)

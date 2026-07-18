@@ -1,3 +1,5 @@
+import time
+
 from fastapi import APIRouter
 from fastapi.security import HTTPBearer
 
@@ -9,3 +11,8 @@ security = HTTPBearer()
 @router.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@router.get("/get_time")
+def get_time():
+    return {"status": str(time.time())}
