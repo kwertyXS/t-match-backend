@@ -71,3 +71,15 @@ jobs:
           files: backend-image.tar.gz
           draft: true
           generate_release_notes: true
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          token: ${{ github.token }}
+
+      - name: Update Helm values for GitOps
+        run: |
+          sed -i "s/tag: latest/tag: ${{ github.event.workflow_run.head_sha }}/" helm/backend/values.yaml
+          git add helm/backend/values.yaml
+          git commit -m "chore: update image tag to ${{ github.event.workflow_run.head_sha }} [skip ci]" || true
+          git push

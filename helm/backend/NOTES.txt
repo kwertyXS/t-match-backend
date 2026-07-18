@@ -1,0 +1,10 @@
+Backend deployed successfully!
+
+To verify:
+  kubectl get pods -l "app.kubernetes.io/name={{ include "backend.name" . }}"
+
+To access the API:
+  https://{{ (index .Values.ingress.hosts 0).host }}/docs
+
+To upgrade (with new image tag):
+  helm upgrade backend ./helm/backend --set image.tag=<new-tag>
