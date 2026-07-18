@@ -227,3 +227,6 @@ __marimo__/
 # AI
 .qwen/
 QWEN.md
+
+# Kubernetes secrets
+k8s/secrets.yaml
