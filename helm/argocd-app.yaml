@@ -3,13 +3,17 @@ kind: Application
 metadata:
   name: backend
   namespace: argocd
+#  labels:
+#    argocd-image-updater.argoproj.io/enabled: "true"
   annotations:
     argocd-image-updater.argoproj.io/image-list: backend=registry.digitalocean.com/kwerty/backend
-    argocd-image-updater.argoproj.io/backend.update-strategy: latest
-    argocd-image-updater.argoproj.io/backend.helm.image-name: image.repository
-    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
-    argocd-image-updater.argoproj.io/write-back-method: argocd
-    argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd:backend
+#    argocd-image-updater.argoproj.io/backend.update-strategy: latest
+#    argocd-image-updater.argoproj.io/backend.helm.image-name: image.repository
+#    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
+#    argocd-image-updater.argoproj.io/write-back-method: argocd
+#    argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd:backend
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
@@ -26,5 +30,9 @@ spec:
     automated:
       prune: true
       selfHeal: true
+      allowEmpty: true
     syncOptions:
       - CreateNamespace=true
+      - Validate=true
+      - PruneLast=true
+      - PrunePropagationPolicy=foreground
