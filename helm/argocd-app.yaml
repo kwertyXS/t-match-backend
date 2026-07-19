@@ -9,9 +9,9 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: registry.digitalocean.com/kwerty/backend:~1
 #    argocd-image-updater.argoproj.io/backend.update-strategy: latest
 #    argocd-image-updater.argoproj.io/backend.helm.image-name: image.repository
-#    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
+    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
 #    argocd-image-updater.argoproj.io/write-back-method: argocd
-#    argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd:backend
+    argocd-image-updater.argoproj.io/backend.pull-secret: pullsecret:argocd:backend
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
