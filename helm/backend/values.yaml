@@ -1,8 +1,8 @@
-replicaCount: 3
+replicaCount: 4
 
 image:
   repository: registry.digitalocean.com/kwerty/backend
-  tag: latest
+  tag: ~latest
   pullPolicy: Always
 
 nameOverride: ""
