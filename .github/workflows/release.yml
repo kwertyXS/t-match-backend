@@ -40,6 +40,7 @@ jobs:
         run: |
           echo "repo_path=${{ github.repository_owner }}/${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
 
+      # Оптимизировано: собираем, пушим в CR и ОДНОВРЕМЕННО сохраняем локальный tar-архив
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -50,11 +51,11 @@ jobs:
             ghcr.io/${{ steps.prep.outputs.repo_path }}:latest
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:${{ github.event.workflow_run.head_sha }}
             registry.digitalocean.com/${{ secrets.DO_CR_REGISTRY }}/backend:latest
+          outputs: type=docker,dest=backend-image.tar
 
-      - name: Save image archive
-        run: |
-          docker pull ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }}
-          docker save ghcr.io/${{ steps.prep.outputs.repo_path }}:${{ github.event.workflow_run.head_sha }} | gzip > backend-image.tar.gz
+      # Просто архивируем уже готовый tar-файл, не скачивая его заново из интернета
+      - name: Compress image archive
+        run: gzip -9 backend-image.tar
 
       - name: Create Draft Release
         uses: softprops/action-gh-release@v2

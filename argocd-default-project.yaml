@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  namespace: argocd
+spec:
+  description: "Дефолтный проект с полными правами для бэкенда и сервисов"
+  # Разрешаем брать манифесты из любых репозиториев
+  sourceRepos:
+    - '*'
+  # Разрешаем деплоить в любые неймсейсы текущего кластера
+  destinations:
+    - namespace: '*'
+      server: '*'
+  # Разрешаем создавать любые кластерные ресурсы (кластерные роли, CRD и т.д.)
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
