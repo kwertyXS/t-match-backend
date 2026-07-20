@@ -4,7 +4,15 @@ metadata:
   name: backend
   namespace: argocd
   labels:
-    app: backend
+    argocd-image-updater.argoproj.io/enabled: "true"
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: backend=registry.digitalocean.com/kwerty/backend
+    argocd-image-updater.argoproj.io/backend.update-strategy: semver
+    argocd-image-updater.argoproj.io/backend.helm.image-name: image.repository
+    argocd-image-updater.argoproj.io/backend.helm.image-tag: image.tag
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^1\.\d+$
+    argocd-image-updater.argoproj.io/backend.argocd.update-strategy: sync
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
