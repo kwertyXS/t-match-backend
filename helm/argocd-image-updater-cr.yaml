@@ -1,0 +1,17 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: backend
+  namespace: argocd
+spec:
+  applicationSelector:
+    matchLabels:
+      app: backend
+  image: registry.digitalocean.com/kwerty/backend
+  updateStrategy: semver
+  allowTags:
+    regexp: ^1\.\d+$
+  writeMethod: argocd
+  helm:
+    imageName: image.repository
+    imageTag: image.tag
