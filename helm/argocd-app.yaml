@@ -3,8 +3,8 @@ kind: Application
 metadata:
   name: backend
   namespace: argocd
-  labels:
-    app: backend
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: registry.digitalocean.com/kwerty/backend:~v4.0
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -16,6 +16,9 @@ spec:
     helm:
       valueFiles:
         - values.yaml
+      parameters:
+        - name: "image.tag"
+          value: v1.0
   destination:
     server: https://kubernetes.default.svc
     namespace: default
