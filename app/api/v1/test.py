@@ -15,4 +15,4 @@ def health():
 
 @router.get("/get_time")
 def get_time():
-    return {"status": str(time.time())}
+    return {"time": str(time.time()), "status": "ok"}
