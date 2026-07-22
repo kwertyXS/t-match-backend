@@ -63,9 +63,9 @@ jobs:
       - name: Update Helm chart version
         run: |
           VERSION="${{ steps.prep.outputs.version }}"
-          sed -i "s/^version:.*/version: $VERSION/" helm/backend/Chart.yaml
-          sed -i "s/appVersion:.*/appVersion: \"$VERSION\"/" helm/backend/Chart.yaml
-          sed -i "s/tag:.*/tag: \"$VERSION\"/" helm/backend/values.yaml
+          sed -i'' "s/^version:.*/version: $VERSION/" helm/backend/Chart.yaml
+          sed -i'' "s/appVersion:.*/appVersion: \"$VERSION\"/" helm/backend/Chart.yaml
+          sed -i'' "s/tag:.*/tag: \"$VERSION\"/" helm/backend/values.yaml
 
       - name: Commit and push Helm chart changes
         run: |
@@ -73,4 +73,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add helm/backend/Chart.yaml helm/backend/values.yaml
           git commit -m "Bump Helm chart version to ${{ steps.prep.outputs.version }} [skip ci]"
-          git push origin HEAD:master || echo "Push failed (non-critical)"
+          git push origin HEAD:master
